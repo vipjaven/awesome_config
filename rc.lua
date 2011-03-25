@@ -8,6 +8,7 @@ require("beautiful")
 require("naughty")
 -- Load Debian menu entries
 require("debian.menu")
+--require("weather")
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
@@ -80,6 +81,10 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock({ align = "right" })
+
+--Create a weather widget
+--myweatherwidget = widget({ type = "imagebox" })
+--weather.addWeather(myweatherwidget, "http://pogoda.yandex.ru/beijing/", 999)
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -160,6 +165,7 @@ for s = 1, screen.count() do
             mypromptbox[s],
             layout = awful.widget.layout.horizontal.leftright
         },
+        --myweatherwidget, 
         mytextclock,
         s == 1 and mysystray or nil,
         mytasklist[s],
@@ -267,8 +273,10 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
 
-    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
-    awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
+    awful.key({ modkey,           }, "i",     function () awful.tag.incmwfact( 0.05)    end),
+    awful.key({ modkey,           }, "o",     function () awful.tag.incmwfact(-0.05)    end),
+    awful.key({ modkey,           }, "h",     function () awful.client.incwfact( 0.05)   end),
+    awful.key({ modkey,           }, "l",     function () awful.client.incwfact(-0.05)   end),
     awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1)      end),
     awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1)      end),
     awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1)         end),
@@ -282,7 +290,10 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, }, "i", function () awful.util.spawn("iceweasel") end),
     --awful.key({ modkey, }, "c", function () awful.util.spawn_with_shell("exe=`export LD_PRELOAD=/usr/lib/libGL.so && chromium-browser`") end),
     awful.key({ modkey, }, "c", function() launch_browser() end),
+    --awful.key({ modkey, }, "e", function () launch_nautilus() end),
     awful.key({ modkey, }, "e", function () launch_nautilus() end),
+    awful.key({ modkey, "Shift"}, "e", function () awful.util.spawn("rox-filer") end),
+
     --awful.key({ modkey, }, "m", function () awful.util.spawn("amixer -q sset Master toggle") end),
     --awful.key({ modkey, }, "p", function () awful.util.spawn("pidgin") end),
     --awful.key({ modkey, }, "s", function () awful.util.spawn("xlock -mode blank -dpmsoff 5 -font -misc-fixed-*-*-*-*-20-*-*-*-*-*-*") end),
@@ -457,6 +468,8 @@ awful.rules.rules = {
       properties = { tag = tags[1][6] } },
     { rule = { class = "Nautilus"},
       properties = { tag = tags[1][3] } },
+    { rule = { class = "Thunar"},
+      properties = { tag = tags[1][3] } },
 
 }
 -- }}}
@@ -507,7 +520,7 @@ autorunApps =
 { 
     "pidgin",
     "/home/b312/.dropbox-dist/dropbox start",
-    "gnome-do",
+    "gnomedo",
 }
 
 function launch_browser()
@@ -522,6 +535,14 @@ function launch_nautilus()
     local ret = os.execute("pgrep -x nautilus ")
     if ret ~= 0 then
         awful.util.spawn("nautilus --no-desktop")
+    end
+    awful.tag.viewonly(tags[1][3])
+end
+
+function launch_thunar()
+    local ret = os.execute("pgrep -x thunar ")
+    if ret ~= 0 then
+        awful.util.spawn("thunar")
     end
     awful.tag.viewonly(tags[1][3])
 end
