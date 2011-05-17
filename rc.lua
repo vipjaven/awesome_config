@@ -82,6 +82,9 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- Create a textclock widget
 mytextclock = awful.widget.textclock({ align = "right" })
 
+mynetwork = widget({ type = "textbox", align = "right" })
+mynetwork.text = "  ?  "
+
 --Create a weather widget
 --myweatherwidget = widget({ type = "imagebox" })
 --weather.addWeather(myweatherwidget, "http://pogoda.yandex.ru/beijing/", 999)
@@ -165,8 +168,8 @@ for s = 1, screen.count() do
             mypromptbox[s],
             layout = awful.widget.layout.horizontal.leftright
         },
-        --myweatherwidget, 
         mytextclock,
+        mynetwork,
         s == 1 and mysystray or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
@@ -518,9 +521,9 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 autorun = true
 autorunApps = 
 { 
-    "pidgin",
+    --"pidgin",
     "/home/b312/.dropbox-dist/dropbox start",
-    "gnomedo",
+    "gnome-do",
 }
 
 function launch_browser()
@@ -573,4 +576,20 @@ function hook_manage(c)
     end
 end
 awful.hooks.focus.register(hook_manage)
+awful.hooks.timer.register(3, function() mynetwork.text = '<span color="green">' .. getnetworkinfo() .. '</span>' end)
+
+function getnetworkinfo()
+    config_dir = awful.util.getdir("config")
+    local f = io.open(config_dir .. "/tmp/networkinfo") 
+    local l = nil
+    if f ~= nil then
+       l = f:read()
+    else
+       l = " ? "
+    end
+    f:close()
+    os.execute( config_dir .. "/script/sysmon > " .. config_dir .. "/tmp/networkinfo &" )
+    return l
+end
+
 
