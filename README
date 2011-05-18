@@ -1,0 +1,42 @@
+This is a module written in lua, which allows to monitor the weather
+in almost any arbitrary city according to the information provided by
+http://pogoda.yandex.ru .
+
+USAGE
+
+1. Unpack this archive to your awesome configuration directory.
+
+2. Add the following line to the beginning of your rc.lua file:
+
+	require("weather")
+
+3. Create a textbox or imagebox widget, for example:
+
+	myweatherwidget = widget({ type = "textbox" })
+
+	--or widget({ type = "imagebox" })
+
+4. Then visit the page of your city on http://pogoda.yandex.ru .
+The URL should be something like "http://pogoda.yandex.ru/xxxxx/"
+Remember these "xxxxx" :)
+
+5. After that, in your rc. lua file, call the following function with
+appropriate arguments:
+
+	weather.addWeather(myweatherwidget, "xxxxx", timeout)
+
+The default city code is the code of Moscow.
+The default timeout for widget updating is 907 seconds.
+
+6. Remember to put your widget into some suitable wibox ;)
+
+Left-clicking on the widget will force it to update data immidiately.
+
+You may create any number of widgets monitoring weather in different
+cities (or even in the same one, if you want to see, for example, either
+current t° in text format either wonderful shiny picture illustrating
+the сurrent weather state).
+
+Just note that you can't associate more than one city with a single
+widget: it will accept the city code only for the first time the
+"addWeather()" function is called.
