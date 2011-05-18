@@ -8,7 +8,7 @@ require("beautiful")
 require("naughty")
 -- Load Debian menu entries
 require("debian.menu")
---require("weather")
+require("weather")
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
@@ -86,8 +86,9 @@ mynetwork = widget({ type = "textbox", align = "right" })
 mynetwork.text = "  ?  "
 
 --Create a weather widget
---myweatherwidget = widget({ type = "imagebox" })
---weather.addWeather(myweatherwidget, "http://pogoda.yandex.ru/beijing/", 999)
+myweatherwidget = widget({ type = "imagebox" })
+
+weather.addWeather(myweatherwidget, "beijing", 999)
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -169,8 +170,9 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mytextclock,
-        mynetwork,
         s == 1 and mysystray or nil,
+        myweatherwidget, 
+        mynetwork,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
@@ -290,9 +292,10 @@ globalkeys = awful.util.table.join(
     -- Private global keys
     awful.key({ modkey, }, "a", function () awful.util.spawn("xterm -e alsamixer") end),
     awful.key({ modkey, }, "b", function () mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible end),
-    awful.key({ modkey, }, "i", function () awful.util.spawn("iceweasel") end),
+    --awful.key({ modkey, }, "i", function () awful.util.spawn("iceweasel") end),
     --awful.key({ modkey, }, "c", function () awful.util.spawn_with_shell("exe=`export LD_PRELOAD=/usr/lib/libGL.so && chromium-browser`") end),
     awful.key({ modkey, }, "c", function() launch_browser() end),
+    awful.key({ modkey, }, "i", function() launch_Mendeleydesktop() end),
     --awful.key({ modkey, }, "e", function () launch_nautilus() end),
     awful.key({ modkey, }, "e", function () launch_nautilus() end),
     awful.key({ modkey, "Shift"}, "e", function () awful.util.spawn("rox-filer") end),
@@ -302,7 +305,7 @@ globalkeys = awful.util.table.join(
     --awful.key({ modkey, }, "s", function () awful.util.spawn("xlock -mode blank -dpmsoff 5 -font -misc-fixed-*-*-*-*-20-*-*-*-*-*-*") end),
     awful.key({ modkey, }, "s", function () awful.util.spawn("gnome-screensaver-command --lock") end),
     awful.key({ modkey, }, "t", function () awful.util.spawn("mpc toggle") end),
-    awful.key({ modkey, }, "v", function () awful.util.spawn("virtualbox") end),
+    awful.key({ modkey, }, "v", function () launch_virtualbox() end),
     awful.key({ modkey, }, "x", function () awful.util.spawn("xterm") end),
     awful.key({ modkey, }, "Up", function () awful.util.spawn("amixer -q sset PCM 10%+ unmute") end),
     awful.key({ modkey, }, "Down", function () awful.util.spawn("amixer -q sset PCM 10%- unmute") end),
@@ -534,6 +537,14 @@ function launch_browser()
     awful.tag.viewonly(tags[1][6])
 end
 
+function launch_Mendeleydesktop()
+    local ret = os.execute(mendeleydesktop)
+    if ret ~= 0 then
+        awful.util.spawn("Mendeleydesktop")
+    end
+    awful.tag.viewonly(tags[1][7])
+end
+
 function launch_nautilus()
     local ret = os.execute("pgrep -x nautilus ")
     if ret ~= 0 then
@@ -548,6 +559,14 @@ function launch_thunar()
         awful.util.spawn("thunar")
     end
     awful.tag.viewonly(tags[1][3])
+end
+
+function launch_virtualbox()
+    local ret = os.execute("pgrep -x VirtualBox ")
+    if ret ~= 0 then
+        awful.util.spawn("virtualbox")
+    end
+    awful.tag.viewonly(tags[1][9])
 end
 
 if autorun then
@@ -576,11 +595,11 @@ function hook_manage(c)
     end
 end
 awful.hooks.focus.register(hook_manage)
-awful.hooks.timer.register(3, function() mynetwork.text = '<span color="green">' .. getnetworkinfo() .. '</span>' end)
+awful.hooks.timer.register(2, function() mynetwork.text = '<span color="yellow">' .. getnetworkinfo() .. '</span>' end)
 
 function getnetworkinfo()
-    config_dir = awful.util.getdir("config")
-    local f = io.open(config_dir .. "/tmp/networkinfo") 
+    --config_dir = awful.util.getdir("config")
+    local f = io.open("/tmp/networkinfo") 
     local l = nil
     if f ~= nil then
        l = f:read()
@@ -588,7 +607,7 @@ function getnetworkinfo()
        l = " ? "
     end
     f:close()
-    os.execute( config_dir .. "/script/sysmon > " .. config_dir .. "/tmp/networkinfo &" )
+    os.execute( "/tmp/sysmon > /tmp/networkinfo &" )
     return l
 end
 
