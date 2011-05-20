@@ -3,7 +3,7 @@
 #settings:
 netspeed=true
 ram=true
-cpu=false
+cpu=true
 #-------------------------------------------------------
 
 

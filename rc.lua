@@ -8,7 +8,8 @@ require("beautiful")
 require("naughty")
 -- Load Debian menu entries
 require("debian.menu")
-require("weather")
+--require("weather")
+--require("vicious")
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
@@ -34,6 +35,12 @@ editor_cmd = terminal .. " -e " .. editor
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
+
+
+-- Initialize widget
+--datewidget = widget({ type = "textbox" })
+-- Register widget
+--vicious.register(datewidget, vicious.widgets.date, "%b %d, %R", 60)
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 layouts =
@@ -80,15 +87,16 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 --
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock({ align = "right" })
+--mytextclock = awful.widget.textclock({ align = "right" })
+mytextclock = awful.widget.textclock({ align = "right" }, '<span color="lightgreen">%a %b %d, %H:%M:%S</span>', 1)
+
 
 mynetwork = widget({ type = "textbox", align = "right" })
 mynetwork.text = "  ?  "
 
 --Create a weather widget
-myweatherwidget = widget({ type = "imagebox" })
-
-weather.addWeather(myweatherwidget, "beijing", 999)
+--myweatherwidget = widget({ type = "imagebox" })
+--weather.addWeather(myweatherwidget, "beijing", 999)
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -158,7 +166,7 @@ for s = 1, screen.count() do
                                           end, mytasklist.buttons)
 
     -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "top", screen = s })
+    mywibox[s] = awful.wibox({ position = "top", height = "18",screen = s })
     -- Add widgets to the wibox - order matters
     mywibox[s].widgets = {
         {
@@ -171,8 +179,8 @@ for s = 1, screen.count() do
         },
         mytextclock,
         s == 1 and mysystray or nil,
-        myweatherwidget, 
         mynetwork,
+        --datewidget, 
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
@@ -295,7 +303,7 @@ globalkeys = awful.util.table.join(
     --awful.key({ modkey, }, "i", function () awful.util.spawn("iceweasel") end),
     --awful.key({ modkey, }, "c", function () awful.util.spawn_with_shell("exe=`export LD_PRELOAD=/usr/lib/libGL.so && chromium-browser`") end),
     awful.key({ modkey, }, "c", function() launch_browser() end),
-    awful.key({ modkey, }, "i", function() launch_Mendeleydesktop() end),
+    awful.key({ modkey, }, "u", function() launch_Mendeleydesktop() end),
     --awful.key({ modkey, }, "e", function () launch_nautilus() end),
     awful.key({ modkey, }, "e", function () launch_nautilus() end),
     awful.key({ modkey, "Shift"}, "e", function () awful.util.spawn("rox-filer") end),
@@ -476,7 +484,8 @@ awful.rules.rules = {
       properties = { tag = tags[1][3] } },
     { rule = { class = "Thunar"},
       properties = { tag = tags[1][3] } },
-
+    { rule = { class = "Mendeleydesktop"},
+      properties = { tag = tags[1][7] } },
 }
 -- }}}
 
@@ -524,9 +533,11 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 autorun = true
 autorunApps = 
 { 
-    --"pidgin",
+    "pastie",
+    "pidgin",
     "/home/b312/.dropbox-dist/dropbox start",
     "gnome-do",
+    "indicator-weather",
 }
 
 function launch_browser()
@@ -538,9 +549,9 @@ function launch_browser()
 end
 
 function launch_Mendeleydesktop()
-    local ret = os.execute(mendeleydesktop)
+    local ret = os.execute("pgrep mendeleydesktop")
     if ret ~= 0 then
-        awful.util.spawn("Mendeleydesktop")
+        awful.util.spawn("mendeleydesktop")
     end
     awful.tag.viewonly(tags[1][7])
 end
@@ -595,7 +606,7 @@ function hook_manage(c)
     end
 end
 awful.hooks.focus.register(hook_manage)
-awful.hooks.timer.register(2, function() mynetwork.text = '<span color="yellow">' .. getnetworkinfo() .. '</span>' end)
+awful.hooks.timer.register(2, function() mynetwork.text = '<span color="yellow">\t' .. getnetworkinfo() .. '\t</span>' end)
 
 function getnetworkinfo()
     --config_dir = awful.util.getdir("config")
