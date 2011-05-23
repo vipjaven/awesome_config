@@ -8,8 +8,6 @@ require("beautiful")
 require("naughty")
 -- Load Debian menu entries
 require("debian.menu")
---require("weather")
---require("vicious")
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
@@ -36,11 +34,6 @@ editor_cmd = terminal .. " -e " .. editor
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
 
-
--- Initialize widget
---datewidget = widget({ type = "textbox" })
--- Register widget
---vicious.register(datewidget, vicious.widgets.date, "%b %d, %R", 60)
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 layouts =
@@ -88,15 +81,11 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- {{{ Wibox
 -- Create a textclock widget
 --mytextclock = awful.widget.textclock({ align = "right" })
-mytextclock = awful.widget.textclock({ align = "right" }, '<span color="lightgreen">%a %b %d, %H:%M:%S</span>', 1)
+mytextclock = awful.widget.textclock({ align = "right" }, '<span color="lightblue">\t%A</span><span color="lightgreen"> %B %d, %Y </span><span color="red">(week %W, day %j) </span><span color="cyan">%H:%M:%S</span>', 1)
 
 
 mynetwork = widget({ type = "textbox", align = "right" })
 mynetwork.text = "  ?  "
-
---Create a weather widget
---myweatherwidget = widget({ type = "imagebox" })
---weather.addWeather(myweatherwidget, "beijing", 999)
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
