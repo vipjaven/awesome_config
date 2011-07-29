@@ -82,6 +82,8 @@ theme.titlebar_maximized_button_normal_inactive = theme_icons .. "titlebar/maxim
 --theme.wallpaper_cmd = { "awsetbg" .. " " .. os.getenv("HOME") .. "/.Wallpaper" }
 theme.wallpaper_cmd = { "awsetbg /usr/share/awesome/themes/zenburn/zenburn-background.png" }
 
+--theme.wallpaper_cmd = { "awsetbg /home/b312/Pictures/wallpapers/wallpaper-257983.jpg" }
+
 -- You can use your own layout theme_icons like this:
 theme.layout_tile       = theme_icons .. "layouts/tile.png"
 theme.layout_tileleft   = theme_icons .. "layouts/tileleft.png"

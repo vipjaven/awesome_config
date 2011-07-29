@@ -26,6 +26,7 @@ naughty.config.default_preset.border_color     = beautiful.border_focus
 terminal = "gnome-terminal"
 editor = "vim"
 editor_cmd = terminal .. " -e " .. editor
+pidgin_flag = 0
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -155,7 +156,7 @@ for s = 1, screen.count() do
                                           end, mytasklist.buttons)
 
     -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "top", height = "18",screen = s })
+    mywibox[s] = awful.wibox({ position = "top", height = "20",screen = s })
     -- Add widgets to the wibox - order matters
     mywibox[s].widgets = {
         {
@@ -229,8 +230,7 @@ globalkeys = awful.util.table.join(
     end),
     -- }}}
 
-
-
+    awful.key({ modkey, }, ",", function () movetocurrent("Pidgin") end),
     awful.key({ modkey,           }, "p",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "n",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
@@ -463,6 +463,8 @@ awful.rules.rules = {
       properties = { floating = true, tag = tags[1][8] } },
     { rule = { class = "Pidgin" },
       properties = { floating = true, tag = tags[1][8] } },
+    { rule = { class = "Skype" },
+      properties = { floating = true, tag = tags[1][8] } },
     { rule = { class = "Linux-fetion" },
       properties = { floating = true, tag = tags[1][8] } },
     { rule = { class = "VirtualBox" },
@@ -505,8 +507,19 @@ client.add_signal("manage", function (c, startup)
     end
 end)
 
-client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+-- Focus
+client.add_signal("focus"   , function(c)
+                                 c.border_color = beautiful.border_focus
+                                 c.opacity = 1
+                              end)
+
+-- Unfocus
+client.add_signal("unfocus" , function(c)
+                                 c.border_color = beautiful.border_normal
+                                 c.opacity = 0.75
+                              end)
+--client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+--client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
 --apptags =
@@ -523,6 +536,7 @@ autorun = true
 autorunApps = 
 { 
     "pastie",
+    "fcitx -d",
     "pidgin",
     "/home/b312/.dropbox-dist/dropbox start",
     "gnome-do",
@@ -530,9 +544,12 @@ autorunApps =
 }
 
 function launch_browser()
-    local ret = os.execute("pgrep chromium")
-    if ret ~= 0 then
-        awful.util.spawn_with_shell("exe=`export LD_PRELOAD=/usr/lib/libGL.so && chromium-browser`")
+    local ret1 = os.execute("pgrep chromium")
+    local ret2 = os.execute("pgrep firefox")
+    if ret1 ~= 0 and ret2 ~= 0 then
+        --awful.util.spawn_with_shell("exe=`export LD_PRELOAD=/usr/lib/libGL.so && chromium-browser`")
+        awful.util.spawn_with_shell("exe=`export LANG=zh_CN.UTF-8 && export LC_MESSAGES=zh_CN.UTF-8 && chromium-browser`")
+        --awful.util.spawn_with_shell("exe=`firefox`")
     end
     awful.tag.viewonly(tags[1][6])
 end
@@ -571,7 +588,10 @@ end
 
 if autorun then
     for app = 1, #autorunApps do
-        awful.util.spawn(autorunApps[app])
+        local ret = os.execute("pgrep -x " .. autorunApps[app])
+        if ret ~= 0 then
+            awful.util.spawn(autorunApps[app])
+        end
     end
     launch_browser()
 end
@@ -611,4 +631,22 @@ function getnetworkinfo()
     return l
 end
 
+function movetocurrent(name)
+   local clients = client.get(1)
+   local curtag = awful.tag.selected()
+   --os.execute( "echo searching> /tmp/networkinfo &" )
+   for i, c in pairs(clients) do
+       --os.execute( "echo " .. c.class .. " >> /tmp/networkinfo &" )
+       if c.class:find(name) then
+         --os.execute( "echo find> /tmp/networkinfo &" )
+         if pidgin_flag == 0 then
+             pidgin_flag = 1
+             awful.client.movetotag(curtag, c)
+         else
+             pidgin_flag = 0
+             awful.client.movetotag(tags[1][8], c)
+         end
+      end
+   end
+end
 
