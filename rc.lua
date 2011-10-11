@@ -462,7 +462,7 @@ awful.rules.rules = {
     { rule = { class = "Openfetion" },
       properties = { floating = true, tag = tags[1][8] } },
     { rule = { class = "Pidgin" },
-      properties = { floating = true, tag = tags[1][8] } },
+      properties = { floating = true} },
     { rule = { class = "Skype" },
       properties = { floating = true, tag = tags[1][8] } },
     { rule = { class = "Linux-fetion" },
@@ -473,6 +473,8 @@ awful.rules.rules = {
       properties = { tag = tags[1][6] } },
     { rule = { class = "Nautilus"},
       properties = { tag = tags[1][3] } },
+    { rule = { class = "Krusader"},
+      properties = { floating = true, tag = tags[1][3] } },
     { rule = { class = "Thunar"},
       properties = { tag = tags[1][3] } },
     { rule = { class = "Mendeleydesktop"},
@@ -536,20 +538,17 @@ autorun = true
 autorunApps = 
 { 
     "pastie",
-    "fcitx -d",
     "pidgin",
-    "/home/b312/.dropbox-dist/dropbox start",
     "gnome-do",
     "indicator-weather",
 }
 
 function launch_browser()
-    local ret1 = os.execute("pgrep chromium")
+    local ret1 = os.execute("pgrep chrom")
     local ret2 = os.execute("pgrep firefox")
-    if ret1 ~= 0 and ret2 ~= 0 then
-        --awful.util.spawn_with_shell("exe=`export LD_PRELOAD=/usr/lib/libGL.so && chromium-browser`")
-        awful.util.spawn_with_shell("exe=`export LANG=zh_CN.UTF-8 && export LC_MESSAGES=zh_CN.UTF-8 && chromium-browser`")
-        --awful.util.spawn_with_shell("exe=`firefox`")
+    local ret3 = os.execute("pgrep opera")
+    if ret1 ~= 0 and ret2 ~= 0  and ret3 ~= 0 then
+        awful.util.spawn_with_shell("x-www-browser")
     end
     awful.tag.viewonly(tags[1][6])
 end
@@ -563,9 +562,9 @@ function launch_Mendeleydesktop()
 end
 
 function launch_nautilus()
-    local ret = os.execute("pgrep -x nautilus ")
+    local ret = os.execute("pgrep -x nautilus")
     if ret ~= 0 then
-        awful.util.spawn("nautilus --no-desktop")
+        awful.util.spawn("nautilus")
     end
     awful.tag.viewonly(tags[1][3])
 end
@@ -593,6 +592,8 @@ if autorun then
             awful.util.spawn(autorunApps[app])
         end
     end
+    awful.util.spawn("/home/b312/.dropbox-dist/dropbox start")
+    awful.util.spawn("fcitx -d")
     launch_browser()
 end
 

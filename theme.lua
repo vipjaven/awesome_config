@@ -19,7 +19,7 @@ theme.fg_focus      = "#1f1f1f"
 theme.fg_urgent     = "#cc9393"
 theme.fg_minimize   = "#ffffff"
 
-theme.border_width  = "2"
+theme.border_width  = "4"
 theme.border_normal = "#2e3735"
 --theme.border_focus  = "#afc81c"
 theme.border_focus  = "#22ff22"
@@ -80,6 +80,7 @@ theme.titlebar_maximized_button_normal_inactive = theme_icons .. "titlebar/maxim
 
 -- You can use your own command to set your wallpaper
 --theme.wallpaper_cmd = { "awsetbg" .. " " .. os.getenv("HOME") .. "/.Wallpaper" }
+
 theme.wallpaper_cmd = { "awsetbg /usr/share/awesome/themes/zenburn/zenburn-background.png" }
 
 --theme.wallpaper_cmd = { "awsetbg /home/b312/Pictures/wallpapers/wallpaper-257983.jpg" }
