@@ -1,5 +1,5 @@
 -- Standard awesome library
--- this is my test1
+-- this is my test2
 require("awful")
 require("awful.autofocus")
 require("awful.rules")
